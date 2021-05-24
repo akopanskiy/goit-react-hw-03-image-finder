@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
 import SearchBar from './component/SearchBar';
 import ImageGallery from './component/ImageGallery';
 import Button from './component/Button';
 import Spin from './component/Loader';
 import Modal from './component/Modal';
+import imageApi from './services/imageApi';
 
 class App extends Component {
   state = {
@@ -29,13 +29,17 @@ class App extends Component {
     const { page, searchQuery } = this.state;
 
     this.setState({ isLoading: true });
-    axios
-      .get(
-        `https://pixabay.com/api/?q=${searchQuery}&page=${page}&key=20407857-5cbc70afd557f45317642044e&image_type=photo&orientation=horizontal&per_page=12`,
-      )
-      .then(res => {
+
+    const options = {
+      searchQuery,
+      page,
+    };
+
+    imageApi
+      .fetchImages(options)
+      .then(hits => {
         this.setState(prevState => ({
-          images: [...prevState.images, ...res.data.hits],
+          images: [...prevState.images, ...hits],
           page: prevState.page + 1,
         }));
       })
@@ -68,9 +72,7 @@ class App extends Component {
         )}
         {isLoading && <Spin />}
         {showModal && (
-          <Modal onClose={this.toggleModal}>
-            <img src={modalImage} alt="" />
-          </Modal>
+          <Modal onClose={this.toggleModal} bigImage={modalImage} />
         )}
       </>
     );

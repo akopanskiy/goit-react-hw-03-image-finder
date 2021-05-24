@@ -25,7 +25,9 @@ class Modal extends Component {
   render() {
     return createPortal(
       <div className={styles.Overlay}>
-        <div className={styles.Modal}>{this.props.children}</div>
+        <div className={styles.Modal}>
+          <img src={this.props.bigImage} alt="" />
+        </div>
       </div>,
       modalRoot,
     );
